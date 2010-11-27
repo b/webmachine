@@ -229,6 +229,7 @@ accessor_test() ->
     ?assertEqual([{"a", "1"}, {"b", "2"}], req_qs(R)),
     ?assertEqual({"1", "2"}, {get_qs_value("a", R), get_qs_value("b", R)}),
     ?assertEqual("3", get_qs_value("c", "3", R)),
+    ?assertEqual("3", get_qs_value("c", R, "3")),
     ?assertEqual([{"foo", "bar"}], req_cookie(R)),
     ?assertEqual("bar", get_cookie_value("foo", R)),
     ?assertEqual("127.0.0.1", peer(R)).
