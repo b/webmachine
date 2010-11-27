@@ -207,7 +207,9 @@ get_cookie_value(Key, RD) when is_list(Key) -> % string
 get_qs_value(Key, RD) when is_list(Key) -> % string
     proplists:get_value(Key, req_qs(RD)).
 
-get_qs_value(Key, Default, RD) when is_list(Key) ->
+get_qs_value(Key, Default, RD = #wm_reqdata{}) when is_list(Key) ->
+    get_qs_value(Key, RD, Default);
+get_qs_value(Key, RD, Default) when is_list(Key) ->
     proplists:get_value(Key, req_qs(RD), Default).
 
 add_note(K, V, RD) -> RD#wm_reqdata{notes=[{K, V} | RD#wm_reqdata.notes]}.
