@@ -224,7 +224,21 @@ decision(v3b6) ->
     decision_test(resource_call(valid_content_headers), true, v3b5, 501);
 %% "Known Content-Type?"
 decision(v3b5) ->
-    decision_test(resource_call(known_content_type), true, v3b4, 415);
+    case resource_call(known_content_type) of
+        no_default ->
+            PTypes = [Type || {Type,_Fun} <- resource_call(content_types_accepted)],
+            ContentTypeHdr = get_header_val("content-type"),
+            case webmachine_util:choose_media_type(PTypes, ContentTypeHdr) of
+                none ->
+                    respond(415);
+                _ ->
+                    d(v3b4)
+            end;
+        true ->
+            d(v3b4);
+        _ ->
+            respond(415)
+    end;
 %% "Req Entity Too Large?"
 decision(v3b4) ->
     decision_test(resource_call(valid_entity_length), true, v3b3, 413);
