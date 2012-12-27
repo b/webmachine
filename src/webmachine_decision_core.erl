@@ -25,6 +25,16 @@
 -export([do_log/1]).
 -include("webmachine_logger.hrl").
 
+check_accept_type() ->
+    PTypes = [Type || {Type,_Fun} <- resource_call(content_types_accepted)],
+    ContentTypeHdr = get_header_val("content-type"),
+    case webmachine_util:choose_media_type(PTypes, ContentTypeHdr) of
+        none ->
+            respond(415);
+        _ ->
+            d(v3b4)
+    end.
+
 handle_request(Resource, ReqState) ->
     [erase(X) || X <- [decision, code, req_body, bytes_written, tmp_reqstate]],
     put(resource, Resource),
@@ -226,11 +236,11 @@ decision(v3b6) ->
 decision(v3b5) ->
     case resource_call(known_content_type) of
         undefined ->
-            PTypes = [Type || {Type,_Fun} <- resource_call(content_types_accepted)],
-            ContentTypeHdr = get_header_val("content-type"),
-            case webmachine_util:choose_media_type(PTypes, ContentTypeHdr) of
-                none ->
-                    respond(415);
+            case method() of
+                'POST' ->
+                    check_accept_type();
+                'PUT' ->
+                    check_accept_type();
                 _ ->
                     d(v3b4)
             end;
