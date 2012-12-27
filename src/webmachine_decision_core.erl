@@ -225,7 +225,7 @@ decision(v3b6) ->
 %% "Known Content-Type?"
 decision(v3b5) ->
     case resource_call(known_content_type) of
-        no_default ->
+        undefined ->
             PTypes = [Type || {Type,_Fun} <- resource_call(content_types_accepted)],
             ContentTypeHdr = get_header_val("content-type"),
             case webmachine_util:choose_media_type(PTypes, ContentTypeHdr) of

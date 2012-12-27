@@ -42,7 +42,7 @@ default(malformed_request) ->
 default(uri_too_long) ->
     false;
 default(known_content_type) ->
-    no_default;
+    undefined;
 default(valid_content_headers) ->
     true;
 default(valid_entity_length) ->
